@@ -379,6 +379,10 @@ class Game {
       this.min = 20;
       this.max = 30;
       this.speed = 1.3;
+    } else if (this.currentScore < 300) {
+      this.min = 30;
+      this.max = 35;
+      this.speed = 2;
     }
   }
 
