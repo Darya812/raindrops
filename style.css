@@ -442,7 +442,7 @@ h2 {
     grid-row-end: 5;
     grid-column-end: 5;
   }
-  
+
   #zero {
     display: grid;
     grid-row-start: 4;

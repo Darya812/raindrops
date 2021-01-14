@@ -21,6 +21,7 @@ class Raindrop {
     cancelAnimationFrame(this.startAnimation);
     requestAnimationFrame(this.hiddenDrop.bind(this));
   }
+
   hiddenDrop() {
     this.opacityDrop -= 0.1;
     this.drop.style.opacity = this.opacityDrop;
@@ -250,6 +251,9 @@ class Game {
   raindropMaxCount = 2;
   countDrop = 0;
   countRightAnswers = 0;
+  countAutoDrop = 0;
+  timerId;
+  autoFail = 0;
 
   constructor() {
     this.initComponents();
@@ -257,6 +261,52 @@ class Game {
     this.calculator = new Calculator(this.checkResult.bind(this));
   }
 
+  // -----------autoplay-----------------------
+  startAutoPlay() {
+    this.greeting.style.display = "none";
+    this.game.style.display = "flex";
+    this.setDifficult(); 
+    this.raindropArr.forEach((raindrop) => {
+      raindrop.destroy();
+    });
+    this.raindropArr = [];
+  this.countAutoDrop = 0;
+  this.autoFail = 0;
+      
+    
+    this.currentScore = 0;
+    this.score.textContent = `Score: ${this.currentScore}`;
+    this.startGame();
+    console.log("startGame");
+    this.timerId = setTimeout(this.autoPlay.bind(this), 5000);
+  }
+
+  autoPlay() {
+    console.log("autoPlay");
+    if (this.countAutoDrop % 4 === 0) {
+      this.display.value = 53;
+      setTimeout(this.pressEnter.bind(this), 1000);
+      this.autoFail++;
+    } else {
+      this.display.value = this.raindropArr[0].equation;
+      setTimeout(this.pressEnter.bind(this), 1000);
+    }
+    this.timerId = setTimeout(this.autoPlay.bind(this), 2000);
+    console.log(this.autoFail);
+    if (this.autoFail === 3) {
+      clearTimeout(this.timerId);
+     
+    }
+  }
+
+  pressEnter() {
+    let value = Number(this.display.value);
+    this.checkResult(value);
+    this.display.value = "";
+    console.log("pressEnter");
+  }
+
+  //----------star game-------------------
   startGame() {
     this.setDifficult();
     this.wave.style.height = "100px";
@@ -279,6 +329,7 @@ class Game {
       raindrop.addOnFallEvent(this.setScore.bind(this, false));
       this.raindropArr.push(raindrop);
     }
+    this.countAutoDrop++;
   }
 
   initComponents() {
@@ -299,9 +350,11 @@ class Game {
     this.resultScore = document.querySelector(".result-score");
     this.resultRightAnswers = document.querySelector(".result-right-answers");
     this.resultWrongAnswers = document.querySelector(".result-wrong-answers");
+    this.display = document.querySelector(".display");
   }
 
   initEvents() {
+    this.howToPlay.addEventListener("click", this.startAutoPlay.bind(this));
     this.play.addEventListener("click", () => {
       this.greeting.style.display = "none";
       this.game.style.display = "flex";
@@ -413,4 +466,3 @@ class Game {
 }
 
 const game = new Game();
-
