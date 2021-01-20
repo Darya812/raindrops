@@ -171,9 +171,11 @@ class Calculator {
       this.display.value.length - 1
     );
   }
+
   clearDisplayValue() {
     this.display.value = "";
   }
+
   pressEnter() {
     let value = Number(this.display.value);
     this.checkResultFunction(value);
@@ -187,6 +189,7 @@ class Calculator {
       this.display.value += this.keyNum;
     }
   }
+
   addKeyControl(e) {
     switch (e.which) {
       case 110:
@@ -253,6 +256,7 @@ class Game {
   countRightAnswers = 0;
   countAutoDrop = 0;
   timerId;
+  timerId2;
   autoFail = 0;
 
   constructor() {
@@ -265,37 +269,34 @@ class Game {
   startAutoPlay() {
     this.greeting.style.display = "none";
     this.game.style.display = "flex";
-    this.setDifficult(); 
+    this.setDifficult();
     this.raindropArr.forEach((raindrop) => {
       raindrop.destroy();
     });
     this.raindropArr = [];
-  this.countAutoDrop = 0;
-  this.autoFail = 0;
-      
-    
+    this.countAutoDrop = 0;
+    this.autoFail = 0;
+    this.display.value = "";
     this.currentScore = 0;
     this.score.textContent = `Score: ${this.currentScore}`;
     this.startGame();
-    console.log("startGame");
     this.timerId = setTimeout(this.autoPlay.bind(this), 5000);
   }
 
   autoPlay() {
-    console.log("autoPlay");
     if (this.countAutoDrop % 4 === 0) {
       this.display.value = 53;
-      setTimeout(this.pressEnter.bind(this), 1000);
+      this.timerId2 = setTimeout(this.pressEnter.bind(this), 1000);
       this.autoFail++;
     } else {
       this.display.value = this.raindropArr[0].equation;
-      setTimeout(this.pressEnter.bind(this), 1000);
+      this.timerId2 = setTimeout(this.pressEnter.bind(this), 1000);
     }
     this.timerId = setTimeout(this.autoPlay.bind(this), 2000);
-    console.log(this.autoFail);
+
     if (this.autoFail === 3) {
       clearTimeout(this.timerId);
-     
+      clearTimeout(this.timerId2);
     }
   }
 
@@ -374,11 +375,11 @@ class Game {
 
     if (rightRaindrop) {
       rightRaindrop.destroy();
-
       this.raindropArr = this.raindropArr.filter((raindrop) => {
         return raindrop !== rightRaindrop;
       });
       this.setScore(true);
+
       if (rightRaindrop.isBonusRaindrop) {
         this.raindropArr.forEach((raindrop) => {
           raindrop.destroy();
