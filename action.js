@@ -310,6 +310,7 @@ class Game {
   //----------star game-------------------
   startGame() {
     this.setDifficult();
+    this.display.value = '';
     this.wave.style.height = "100px";
     this.score.textContent = `Score: ${this.currentScore}`;
     this.createRaindrops();
